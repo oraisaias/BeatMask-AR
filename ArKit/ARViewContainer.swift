@@ -34,7 +34,12 @@ class Coordinator: NSObject, ARSCNViewDelegate {
 
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         guard anchor is ARFaceAnchor else { return }
-        node.addChildNode(loadVeniceMask())
+        let maskNode = loadVeniceMask()
+        node.addChildNode(maskNode)
+        
+        // Integrar partículas doradas muy visibles
+        let particleEffect = ParticleEffect.goldenSparkle()
+        particleEffect.attach(to: maskNode)
     }
 
     private func loadVeniceMask() -> SCNNode {
