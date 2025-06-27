@@ -7,6 +7,12 @@ ARKit Beat Mask es una app de realidad aumentada para iOS que detecta tu rostro,
 - Círculos expansivos sincronizados con los beats de la música ambiente (usando el micrófono)
 - La máscara "pulsa" al ritmo de la música
 
+## Capturas de pantalla
+
+![Demo 1](assets/file1.jpeg)
+![Demo 2](assets/file2.jpeg)
+![Demo 3](assets/file3.jpeg)
+
 ## Requisitos
 - Xcode 15 o superior
 - iOS 17 o superior
