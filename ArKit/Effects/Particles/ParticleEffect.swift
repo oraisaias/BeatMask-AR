@@ -158,6 +158,17 @@ extension ParticleEffect {
             lifetime: 2.5
         )
     }
+    
+    /// Creates a subtle smoke effect
+    static func subtleSmoke() -> ParticleEffect {
+        return ParticleEffect(
+            particleCount: 20,
+            particleSize: 0.012,
+            particleColor: UIColor(white: 0.7, alpha: 0.18),
+            birthRate: 0.7,
+            lifetime: 2.5
+        )
+    }
 }
 
 // MARK: - UIColor Interpolation Helper

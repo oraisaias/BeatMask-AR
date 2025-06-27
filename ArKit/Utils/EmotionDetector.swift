@@ -13,16 +13,10 @@ struct EmotionDetector {
         let browUp = blendShapes[.browInnerUp]?.floatValue ?? 0
         let jawOpen = blendShapes[.jawOpen]?.floatValue ?? 0
         let eyeWide = (blendShapes[.eyeWideLeft]?.floatValue ?? 0) + (blendShapes[.eyeWideRight]?.floatValue ?? 0)
-
-        // Alegre
         if smile > 0.7 { return .alegre }
-        // Triste
         if frown > 0.5 && browUp > 0.3 { return .triste }
-        // Enojado
         if browDown > 0.5 && frown > 0.3 { return .enojado }
-        // Sorprendido
         if jawOpen > 0.5 && eyeWide > 0.5 { return .sorprendido }
-        // Neutral
         return .neutral
     }
 } 

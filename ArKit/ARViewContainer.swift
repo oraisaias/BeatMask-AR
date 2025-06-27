@@ -37,15 +37,23 @@ class Coordinator: NSObject, ARSCNViewDelegate {
     
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         guard anchor is ARFaceAnchor else { return }
-        // Añadir la máscara 3D
         let mask = loadVeniceMask()
         node.addChildNode(mask)
         self.maskNode = mask
-        
-        // Círculo de onda expansiva como hijo del nodo principal del rostro
-        audioEngine.onBeatDetected = { [weak node] in
-            guard let node = node else { return }
+        let smoke = ParticleEffect.subtleSmoke()
+        let smokeNode = SCNNode()
+        smokeNode.position = SCNVector3(0, 0.05, 0)
+        mask.addChildNode(smokeNode)
+        smoke.attach(to: smokeNode)
+        audioEngine.onBeatDetected = { [weak node, weak self] in
+            guard let node = node, let mask = self?.maskNode else { return }
             SoundWaveEffect.createAndAnimate(on: node)
+            let baseScale: CGFloat = 0.001
+            let pulseUp = SCNAction.scale(to: baseScale * 1.02, duration: 0.08)
+            let pulseDown = SCNAction.scale(to: baseScale, duration: 0.18)
+            let pulseSequence = SCNAction.sequence([pulseUp, pulseDown])
+            mask.removeAction(forKey: "pulse")
+            mask.runAction(pulseSequence, forKey: "pulse")
         }
         audioEngine.start()
     }
