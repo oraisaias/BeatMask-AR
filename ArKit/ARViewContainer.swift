@@ -1,6 +1,7 @@
 import SwiftUI
 import ARKit
 import SceneKit
+import AVFoundation
 
 struct ARViewContainer: UIViewRepresentable {
     func makeCoordinator() -> Coordinator {
@@ -31,46 +32,44 @@ struct ARViewContainer: UIViewRepresentable {
 
 class Coordinator: NSObject, ARSCNViewDelegate {
     weak var sceneView: ARSCNView?
-
+    private let audioEngine = AudioReactiveEngine()
+    private var maskNode: SCNNode?
+    
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         guard anchor is ARFaceAnchor else { return }
-        let maskNode = loadVeniceMask()
-        node.addChildNode(maskNode)
+        // Añadir la máscara 3D
+        let mask = loadVeniceMask()
+        node.addChildNode(mask)
+        self.maskNode = mask
         
-        // Integrar partículas doradas muy visibles
-        let particleEffect = ParticleEffect.goldenSparkle()
-        particleEffect.attach(to: maskNode)
+        // Círculo de onda expansiva como hijo del nodo principal del rostro
+        audioEngine.onBeatDetected = { [weak node] in
+            guard let node = node else { return }
+            SoundWaveEffect.createAndAnimate(on: node)
+        }
+        audioEngine.start()
     }
-
+    
     private func loadVeniceMask() -> SCNNode {
         guard let scene = try? SCNScene(named: "Mask.usdz") else {
             print("❌ No se pudo cargar 'Venice_Mask.usdz'")
             return SCNNode()
         }
-
         let modelNode = SCNNode()
         for child in scene.rootNode.childNodes {
             modelNode.addChildNode(child)
         }
-
         modelNode.position = SCNVector3(0, 0.001, 0)
-
         modelNode.scale = SCNVector3(0.001, 0.001, 0.001)
-
-
         let light = SCNLight()
         light.type = .ambient
         light.intensity = 1000
-        
         let light2 = SCNLight()
         light2.type = .directional
         light2.intensity = 100
-
         let lightNode = SCNNode()
         lightNode.light = light
-
         modelNode.addChildNode(lightNode)
-
         return modelNode
     }
 }
